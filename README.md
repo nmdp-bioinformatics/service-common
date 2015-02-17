@@ -1,2 +1,2 @@
-# services-common
-Services common libraries.
+# service-common 
+Common libraries and utilities for services modules.
