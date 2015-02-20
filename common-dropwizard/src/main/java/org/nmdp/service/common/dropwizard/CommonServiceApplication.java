@@ -42,15 +42,48 @@ import com.wordnik.swagger.reader.ClassReaders;
 
 public abstract class CommonServiceApplication<T extends Configuration> extends Application<T> {
 
-	static final String DOC_URI = "/doc";
+	/**
+	 * resource path of swagger UI within the classpath
+	 */
+	static final String SWAGGER_RESOURCE_PATH = "/swagger-ui";
 
-	public abstract void initializeService(Bootstrap<T> bootstrap);
+	/**
+	 * default URI to map the swagger path to
+	 */
+	static final String DEFAULT_SWAGGER_URI = "/doc";
+
+	/**
+	 * actual swagger URI to map the swagger path to
+	 */
+	private final String swaggerUri;
+
+	public CommonServiceApplication() {
+		this(DEFAULT_SWAGGER_URI);
+	}
 	
+	public CommonServiceApplication(String swaggerPrefix) {
+		super();
+		this.swaggerUri  = swaggerPrefix;
+	}
+	
+	/** 
+	 * dropwizard initialize method callback
+	 */
+	public abstract void initializeService(Bootstrap<T> bootstrap);
+
+	/**
+	 * dropwizard run method callback
+	 */
     public abstract void runService(T configuration, Environment environment) throws Exception;
+
+    /**
+     * callback to configure swagger.  setBasePath and setApiPath are overridden.
+     */
+    public abstract void configureSwagger(SwaggerConfig config);
 
 	@Override
 	public final void initialize(Bootstrap<T> bootstrap) {
-    	bootstrap.addBundle(new AssetsBundle(DOC_URI, DOC_URI, "index.html", "doc"));
+    	bootstrap.addBundle(new AssetsBundle(SWAGGER_RESOURCE_PATH, swaggerUri, "index.html", "swagger-ui"));
     	initializeService(bootstrap);
 	}
 	
@@ -58,11 +91,11 @@ public abstract class CommonServiceApplication<T extends Configuration> extends 
 	public final void run(T configuration, Environment environment)
 			throws Exception 
 	{
-		configureSwagger(environment);
+		setupSwagger(environment);
 		runService(configuration, environment);
 	}
   
-	private void configureSwagger(Environment environment) {
+	private void setupSwagger(Environment environment) {
 
     	// Swagger Resource
         //environment.addResource(new ApiListingResourceJSON());
@@ -82,17 +115,13 @@ public abstract class CommonServiceApplication<T extends Configuration> extends 
 
         // Set the swagger config options
         SwaggerConfig config = ConfigFactory.config();
+        configureSwagger(config);
   	  	config.setBasePath(environment.getApplicationContext().getContextPath());
   	  	config.setApiPath("/api-doc");
-  	  	config.setApiVersion("1.0");
-  	  	config.setApiInfo(new ApiInfo("Epitope Service", 
-  	  			"This service reports on alleles and their associated immunogenicity groups and provides matching functions.",
-  	  			null, // terms of service url 
-  	  			"epearson@nmdp.org", // contact
-  	  			null, // license
-  	  			null)); // license url
   	  	
-    	environment.jersey().register(new RedirectResource());
+  	  	// redirect calls to base path to 
+    	environment.jersey().register(new RedirectResource(swaggerUri));
     }
 
+	
 }
