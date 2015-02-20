@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.nmdp.service</groupId>
         <artifactId>service-parent</artifactId>
-        <version>1-SNAPSHOT</version>
+        <version>1</version>
     </parent>
 
     <artifactId>common-dropwizard</artifactId>
