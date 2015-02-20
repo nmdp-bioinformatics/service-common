@@ -29,9 +29,16 @@ import javax.ws.rs.Produces;
 
 @Path("/")
 public class RedirectResource {
+
+	private String uri;
+
+	public RedirectResource(String uri) {
+		this.uri = uri;
+	}
+	
 	@GET
 	@Produces("text/html")
 	public String redirect() {
-		return "<META http-equiv=\"refresh\" content=\"0;URL=" + CommonServiceApplication.DOC_URI + "/\">";
+		return "<META http-equiv=\"refresh\" content=\"0;URL=" + uri + "/\">";
 	}
 }

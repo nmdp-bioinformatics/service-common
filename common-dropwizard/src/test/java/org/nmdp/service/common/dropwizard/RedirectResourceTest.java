@@ -23,7 +23,9 @@
 
 package org.nmdp.service.common.dropwizard;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
@@ -34,12 +36,14 @@ public final class RedirectResourceTest {
 
     @Test
     public void testConstructor() {
-        assertNotNull(new RedirectResource());
+        assertNotNull(new RedirectResource("/test"));
     }
 
     @Test
     public void testRedirect() {
-        RedirectResource redirectResource = new RedirectResource();
+        RedirectResource redirectResource = new RedirectResource("/test");
+        String redirect = redirectResource.redirect();
         assertNotNull(redirectResource.redirect());
+        assertThat(redirect, containsString("/test"));
     }
 }

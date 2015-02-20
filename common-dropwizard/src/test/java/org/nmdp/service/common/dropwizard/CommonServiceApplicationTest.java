@@ -24,13 +24,13 @@
 package org.nmdp.service.common.dropwizard;
 
 import static org.junit.Assert.assertNotNull;
-
 import io.dropwizard.Configuration;
-
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
 import org.junit.Test;
+
+import com.wordnik.swagger.config.SwaggerConfig;
 
 /**
  * Unit test for CommonServiceApplication.
@@ -55,5 +55,10 @@ public final class CommonServiceApplicationTest {
         public void runService(final Configuration configuration, final Environment environment) throws Exception {
             // empty
         }
+
+		@Override
+		public void configureSwagger(SwaggerConfig config) {
+			// empty
+		}
     }
 }
