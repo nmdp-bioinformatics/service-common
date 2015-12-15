@@ -30,7 +30,8 @@ import io.dropwizard.setup.Environment;
 
 import org.junit.Test;
 
-import com.wordnik.swagger.config.SwaggerConfig;
+import io.swagger.config.SwaggerConfig;
+import io.swagger.jaxrs.config.BeanConfig;
 
 /**
  * Unit test for CommonServiceApplication.
@@ -57,8 +58,9 @@ public final class CommonServiceApplicationTest {
         }
 
 		@Override
-		public void configureSwagger(SwaggerConfig config) {
-			// empty
+		public void setupSwagger(BeanConfig beanConfig) {
+			// TODO Auto-generated method stub
+			
 		}
     }
 }

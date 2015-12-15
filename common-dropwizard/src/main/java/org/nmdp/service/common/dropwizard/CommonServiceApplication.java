@@ -28,17 +28,9 @@ import io.dropwizard.Configuration;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-
-import com.wordnik.swagger.config.ConfigFactory;
-import com.wordnik.swagger.config.ScannerFactory;
-import com.wordnik.swagger.config.SwaggerConfig;
-import com.wordnik.swagger.jaxrs.config.DefaultJaxrsScanner;
-import com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider;
-import com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON;
-import com.wordnik.swagger.jaxrs.listing.ResourceListingProvider;
-import com.wordnik.swagger.jaxrs.reader.DefaultJaxrsApiReader;
-import com.wordnik.swagger.model.ApiInfo;
-import com.wordnik.swagger.reader.ClassReaders;
+import io.swagger.config.SwaggerConfig;
+import io.swagger.jaxrs.config.BeanConfig;
+import io.swagger.jaxrs.listing.ApiListingResource;
 
 public abstract class CommonServiceApplication<T extends Configuration> extends Application<T> {
 
@@ -67,20 +59,20 @@ public abstract class CommonServiceApplication<T extends Configuration> extends 
 	}
 	
 	/** 
-	 * dropwizard initialize method callback
+	 * Dropwizard initialize method callback
 	 */
 	public abstract void initializeService(Bootstrap<T> bootstrap);
 
 	/**
-	 * dropwizard run method callback
+	 * Dropwizard run method callback
 	 */
     public abstract void runService(T configuration, Environment environment) throws Exception;
 
     /**
-     * callback to configure swagger.  setBasePath and setApiPath are overridden.
+     * Callback to configure swagger.
      */
-    public abstract void configureSwagger(SwaggerConfig config);
-
+	public abstract void setupSwagger(BeanConfig beanConfig);
+	
 	@Override
 	public final void initialize(Bootstrap<T> bootstrap) {
     	bootstrap.addBundle(new AssetsBundle(SWAGGER_RESOURCE_PATH, swaggerUri, "index.html", "swagger-ui"));
@@ -94,34 +86,23 @@ public abstract class CommonServiceApplication<T extends Configuration> extends 
 		setupSwagger(environment);
 		runService(configuration, environment);
 	}
-  
+	
 	private void setupSwagger(Environment environment) {
 
-    	// Swagger Resource
-        //environment.addResource(new ApiListingResourceJSON());
-        environment.jersey().register(new ApiListingResourceJSON());
+		// display swagger resources at /swagger uri 
+		environment.jersey().register(new ApiListingResource());
 
-        // Swagger providers
-        //environment.addResource(new ResourceListingProvider());
-		environment.jersey().register(new ApiDeclarationProvider());
-		//environment.addResource(new ApiDeclarationProvider());
-		environment.jersey().register(new ResourceListingProvider());
+		// configure swagger environment
+		BeanConfig config = new BeanConfig();
+		setupSwagger(config);
 
-        // Swagger Scanner, which finds all the resources for @Api Annotations
-        ScannerFactory.setScanner(new DefaultJaxrsScanner());
+	  	// redirect calls to base path to
+    	// environment.jersey().register(new RedirectResource("/swagger-ui/index.html?url=/swagger"));
+		environment.servlets().addServlet("redirect", 
+				new DynamicRedirectServlet("/swagger-ui/index.html?url=/swagger"))
+				.addMapping("", "/", "/swagger-ui", "/swagger-ui/");
 
-        // Add the reader, which scans the resources and extracts the resource information
-        ClassReaders.setReader(new DefaultJaxrsApiReader());
-
-        // Set the swagger config options
-        SwaggerConfig config = ConfigFactory.config();
-        configureSwagger(config);
-  	  	config.setBasePath(environment.getApplicationContext().getContextPath());
-  	  	config.setApiPath("/api-doc");
-  	  	
-  	  	// redirect calls to base path to 
-    	environment.jersey().register(new RedirectResource(swaggerUri));
-    }
+	}
 
 	
 }

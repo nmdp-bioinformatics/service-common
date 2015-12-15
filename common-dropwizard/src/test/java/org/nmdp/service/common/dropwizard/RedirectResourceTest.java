@@ -23,9 +23,9 @@
 
 package org.nmdp.service.common.dropwizard;
 
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.containsString;
 
 import org.junit.Test;
 
