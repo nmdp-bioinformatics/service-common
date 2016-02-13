@@ -27,7 +27,7 @@
   <parent>
     <groupId>org.nmdp.service</groupId>
     <artifactId>service-parent</artifactId>
-    <version>3-SNAPSHOT</version>
+    <version>3</version>
   </parent>
   <groupId>org.nmdp.service</groupId>
   <artifactId>common-parent</artifactId>
