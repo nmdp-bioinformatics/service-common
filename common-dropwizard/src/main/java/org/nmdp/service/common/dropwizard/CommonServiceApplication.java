@@ -42,7 +42,7 @@ public abstract class CommonServiceApplication<T extends Configuration> extends 
 	/**
 	 * default URI to map the swagger path to
 	 */
-	static final String DEFAULT_SWAGGER_URI = "/doc";
+	static final String DEFAULT_SWAGGER_URI = "/swagger-ui";
 
 	/**
 	 * actual swagger URI to map the swagger path to
@@ -97,10 +97,9 @@ public abstract class CommonServiceApplication<T extends Configuration> extends 
 		setupSwagger(config);
 
 	  	// redirect calls to base path to
-    	// environment.jersey().register(new RedirectResource("/swagger-ui/index.html?url=/swagger"));
 		environment.servlets().addServlet("redirect", 
-				new DynamicRedirectServlet("/swagger-ui/index.html?url=/swagger"))
-				.addMapping("", "/", "/swagger-ui", "/swagger-ui/");
+				new DynamicRedirectServlet(swaggerUri + "/index.html?url=/swagger"))
+				.addMapping("", "/", swaggerUri, swaggerUri + "/");
 
 	}
 
