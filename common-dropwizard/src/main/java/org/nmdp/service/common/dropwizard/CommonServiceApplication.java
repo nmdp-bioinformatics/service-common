@@ -28,9 +28,9 @@ import io.dropwizard.Configuration;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.swagger.config.SwaggerConfig;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.jaxrs.listing.ApiListingResource;
+import io.swagger.jaxrs.listing.SwaggerSerializers;
 
 public abstract class CommonServiceApplication<T extends Configuration> extends Application<T> {
 
@@ -69,7 +69,8 @@ public abstract class CommonServiceApplication<T extends Configuration> extends 
     public abstract void runService(T configuration, Environment environment) throws Exception;
 
     /**
-     * Callback to configure swagger.
+     * Callback to configure swagger.  In this method, you should call {@link BeanConfig#setResourcePackage(String)}
+     * to specify which packages to scan for classes to be documented.
      */
 	public abstract void setupSwagger(BeanConfig beanConfig);
 	
@@ -91,10 +92,12 @@ public abstract class CommonServiceApplication<T extends Configuration> extends 
 
 		// display swagger resources at /swagger uri 
 		environment.jersey().register(new ApiListingResource());
+		environment.jersey().register(new SwaggerSerializers());
 
 		// configure swagger environment
 		BeanConfig config = new BeanConfig();
-		setupSwagger(config);
+	    config.setScan(true);
+	    setupSwagger(config);
 
 	  	// redirect calls to base path to
 		environment.servlets().addServlet("redirect", 
