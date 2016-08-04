@@ -20,7 +20,7 @@
   </parent>
 
   <artifactId>common-dropwizard</artifactId>
-  <version>3-SNAPSHOT</version>
+  <version>3</version>
   <packaging>jar</packaging>
 
   <name>common-dropwizard</name>
@@ -30,7 +30,7 @@
     <connection>scm:git:git@github.com:nmdp-bioinformatics/service-common.git</connection>
     <developerConnection>scm:git:git@github.com:nmdp-bioinformatics/service-common.git</developerConnection>
     <url>git@github.com:nmdp-bioinformatics/service-common.git</url>
-    <tag>HEAD</tag>
+    <tag>common-dropwizard-3</tag>
   </scm>
 
   <build>
